@@ -25,7 +25,7 @@ jobs:
       - run: |
           mkdir bundle
           ls -l target/release
-          cp target/release/libbevy_dylib.so bundle/
+          cp target/release/libbevy_dylib.dylib bundle/
           cp target/release/rust-demo bundle/
           cp -r assets/ bundle/
       - name: Upload Artifact
