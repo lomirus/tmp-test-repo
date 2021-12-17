@@ -6,8 +6,12 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
-      - run: cargo build --release
-      - uses: actions/upload-artifact@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build Release
+        run: cargo build --release
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
         with:
           name: build
           path: target/release
