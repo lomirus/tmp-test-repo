@@ -3,10 +3,9 @@ on: push
 name: build
 
 jobs:
-  chechout:
+  build:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
       - run: cargo build --release
       - uses: actions/upload-artifact@v2
         with:
