@@ -7,7 +7,7 @@ edition = "2018"
 
 [dependencies.bevy]
 version = "0.5.0"
-# features = ["dynamic"]
+features = ["jpeg"]
 
 [profile.release]
 lto = true
