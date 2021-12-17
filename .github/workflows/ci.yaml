@@ -1,0 +1,12 @@
+on: push
+
+name: build
+
+jobs:
+  chechout:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup -V
+      - run: rustc -Vv
+      - run: cargo
