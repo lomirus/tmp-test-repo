@@ -10,7 +10,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Build Release
         run: cargo build --release
-      - run: cp target/release/rust-demo bundle && cp -r assets/ bundle
+      - run: |
+          mkdir bundle &&
+          cp target/release/* bundle/ &&
+          cp -r assets/ bundle/
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
