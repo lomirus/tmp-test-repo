@@ -1,51 +1,54 @@
 use bevy::prelude::*;
 
-struct Person;
-struct Name(String);
+#[derive(Component)]
+struct Person {
+    name: String,
+    job: String,
+    age: u8,
+}
 
-struct GreetTimer(Timer);
-struct HelloPlugin;
-
-fn greet_people(mut timer: ResMut<GreetTimer>, time: Res<Time>, query: Query<&Name, With<Person>>) {
-    if timer.0.tick(time.delta()).just_finished() {
-        for name in query.iter() {
-            println!("Hello, {}!", name.0);
-        }
+fn print_people(query: Query<&Person>) {
+    for person in query.iter() {
+        println!("{}：{} 歳、{}です", person.name, person.age, person.job);
     }
 }
 
-fn add_people(mut commands: Commands) {
-    commands
-        .spawn()
-        .insert(Person)
-        .insert(Name("Lomirus".to_string()));
-}
-
-impl Plugin for HelloPlugin {
-    fn build(&self, app: &mut AppBuilder) {
-        app.insert_resource(GreetTimer(Timer::from_seconds(2.0, true)))
-            .add_startup_system(add_people.system())
-            .add_system(greet_people.system());
-    }
-}
-
-fn setup(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-) {
-    let texture_handle = asset_server.load::<Texture, &'static str>("image.jpg");
+fn startup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn().insert(Person {
+        name: "野獣先輩".to_string(),
+        job: "学生".to_string(),
+        age: 24,
+    });
+    println!("Greet from Lomirus!");
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands.spawn_bundle(SpriteBundle {
-        material: materials.add(texture_handle.into()),
+        texture: asset_server.load("image.jpg"),
+        ..Default::default()
+    });
+    commands.spawn_bundle(UiCameraBundle::default());
+    commands.spawn().insert_bundle(TextBundle {
+        style: Style {
+            align_self: AlignSelf::Center,
+            margin: Rect::all(Val::Auto),
+            ..Default::default()
+        },
+        text: Text::with_section(
+            "Hello Bevy!",
+            TextStyle {
+                font: asset_server.load("NotoSansMono-Regular.ttf"),
+                font_size: 60.0,
+                color: Color::WHITE,
+            },
+            Default::default(),
+        ),
         ..Default::default()
     });
 }
 
 fn main() {
-    App::build()
+    App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugin(HelloPlugin)
-        .add_startup_system(setup.system())
+        .add_startup_system(startup_system)
+        .add_startup_system(print_people)
         .run();
 }
