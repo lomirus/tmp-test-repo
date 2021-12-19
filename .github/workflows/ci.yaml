@@ -26,7 +26,7 @@ jobs:
           mkdir bundle
           ls -l target/release
           cp target/release/rust-demo bundle/
-          cp -r assets/ bundle/
+          cp -r assets bundle/
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
