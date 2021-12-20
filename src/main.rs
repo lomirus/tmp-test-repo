@@ -1,54 +1,37 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
-struct Person {
-    name: String,
-    job: String,
-    age: u8,
-}
+struct Player;
 
-fn print_people(query: Query<&Person>) {
-    for person in query.iter() {
-        println!("{}：{} 歳、{}です", person.name, person.age, person.job);
-    }
-}
-
-fn startup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn().insert(Person {
-        name: "野獣先輩".to_string(),
-        job: "学生".to_string(),
-        age: 24,
-    });
-    println!("Greet from Lomirus!");
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
-    commands.spawn_bundle(SpriteBundle {
-        texture: asset_server.load("image.jpg"),
-        ..Default::default()
-    });
-    commands.spawn_bundle(UiCameraBundle::default());
-    commands.spawn().insert_bundle(TextBundle {
-        style: Style {
-            align_self: AlignSelf::Center,
-            margin: Rect::all(Val::Auto),
+    commands
+        .spawn_bundle(SpriteBundle {
+            texture: asset_server.load("image.jpg"),
             ..Default::default()
-        },
-        text: Text::with_section(
-            "Hello Bevy!",
-            TextStyle {
-                font: asset_server.load("NotoSansMono-Regular.ttf"),
-                font_size: 60.0,
-                color: Color::WHITE,
-            },
-            Default::default(),
-        ),
-        ..Default::default()
-    });
+        })
+        .insert(Player);
+}
+
+fn move_system(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut players: Query<(&mut Transform, &mut Sprite), With<Player>>,
+) {
+    let (mut player, mut sprite) = players.iter_mut().next().unwrap();
+    if keyboard_input.pressed(KeyCode::A) {
+        sprite.flip_x = false;
+        player.translation.x -= 1.0;
+    }
+    if keyboard_input.pressed(KeyCode::D) {
+        sprite.flip_x = true;
+        player.translation.x += 1.0;
+    }
 }
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_startup_system(startup_system)
-        .add_startup_system(print_people)
+        .add_startup_system(setup)
+        .add_system(move_system)
         .run();
 }

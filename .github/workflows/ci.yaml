@@ -25,6 +25,7 @@ jobs:
       - run: |
           mkdir bundle
           ls -l target/release
+          chmod +x target/release/rust-demo
           cp target/release/rust-demo bundle/
           cp -r assets bundle/
       - name: Upload Artifact
